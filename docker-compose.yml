@@ -1,0 +1,29 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    restart: unless-stopped
+    volumes:
+      - terrasentry-data:/data
+    environment:
+      TERRASENTRY_CACHE: /data/cache
+      TERRASENTRY_DB: /data/cache/terrasentry.sqlite3
+      TERRASENTRY_DEMO_ROOT: /app/demo/remal
+      TERRASENTRY_HTTP_TIMEOUT: "15"
+      TERRASENTRY_JOB_MAX_SECONDS: "180"
+    ports:
+      - "8000:8000"
+
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "8080:80"
+
+volumes:
+  terrasentry-data:
